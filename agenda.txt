@@ -1,0 +1,14 @@
+Date - 2nd Aug 2024
+agenda: integrate auth from clerk; (DONE)
+agenda: create your first post as a user and store to database
+
+flow:
+-setup cloudinary in app.
+-create post page.
+-handle post creation.
+-use all optimistic updates wherever required.
+
+Start with mobile design.
+
+(side task)
+understand navigationmenu of shadcn
