@@ -1,12 +1,18 @@
 import {model, models, Schema} from "mongoose"
 
 const userSchema = new Schema({
-    bio: String,
+    bio: {
+        type: String,
+        default: '',
+    },
     clerk_profile_url: String,
     clerk_user_id: String,
-    password: String,
-    full_name: String,
-    user_name: String,
+    password_enabled: Boolean,
+    fullname: {
+        type: String,
+        default: '',
+    },
+    username: String,
 },{
     timestamps: true,
 });
