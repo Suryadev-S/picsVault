@@ -1,4 +1,4 @@
 import { Inngest } from "inngest";
 
 // Create a client to send and receive events
-export const inngest = new Inngest({ id: "picsVault-app" });
+export const inngest = new Inngest({ id: "picsvault-app" });
