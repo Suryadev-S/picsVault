@@ -10,6 +10,9 @@ import { z } from "zod"
 import {
     Form, FormControl, FormMessage, FormDescription, FormField, FormItem, FormLabel,
 } from "@/components/ui/form"
+import { useCreatePost } from '@/lib/customHooks/customHooks';
+import { useUser } from '@clerk/nextjs';
+import { useState } from 'react';
 
 const formSchema = z.object({
     title: z.string().min(2, {
@@ -20,17 +23,17 @@ const formSchema = z.object({
 
 const CreatePage = () => {
     const { toast } = useToast()
-    let uploaded = false;
-    let cloudinary_image_url: string = "";
-    let cloudinary_public_id: string = "";
+    const { isLoaded, user } = useUser();
+    const handleCreate = useCreatePost();
+    const [cloudinaryImageUrl, setCloudinaryImageUrl] = useState<string>("");
+    const [cloudinaryPublicId, setCloudinaryPublicId] = useState<string>("");
 
-    const handleUploadSuccess = (result: any) => {
-        const { secure_url, public_id } = result.info;
-        cloudinary_image_url = secure_url;
-        cloudinary_public_id = public_id;
+    const handleUploadSuccess = (results: any) => {
+        const { secure_url, public_id } = results.info;
+        setCloudinaryImageUrl(secure_url);
+        setCloudinaryPublicId(public_id);
     }
 
-    // 1. Define your form.
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
         defaultValues: {
@@ -39,11 +42,20 @@ const CreatePage = () => {
         },
     })
 
-    // 2. Define a submit handler.
     function onSubmit(values: z.infer<typeof formSchema>) {
-        // Do something with the form values.
-        // ✅ This will be type-safe and validated.
-        console.log({ ...values, cloudinary_image_url, cloudinary_public_id });
+        if (isLoaded && !!cloudinaryImageUrl && !!cloudinaryPublicId) {
+            const newPost = {
+                userId: user?.id,
+                ...values,
+                username: user?.username,
+                avatarUrl: user?.imageUrl,
+                assetUrl: cloudinaryImageUrl,
+                assetPublicId: cloudinaryPublicId
+            }
+
+            handleCreate.mutate(newPost);
+        }
+        console.log({ ...values, cloudinaryImageUrl, cloudinaryPublicId });
     }
     return (
         <>
@@ -53,7 +65,7 @@ const CreatePage = () => {
                     {({ open }) => {
                         return (
                             <Button onClick={() => open()}>
-                                {uploaded ? "Asset uploaded" : "Upload asset"}
+                                upload asset
                             </Button>
                         );
                     }}
