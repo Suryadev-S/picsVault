@@ -2,11 +2,11 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import axios from 'axios'
 import { Post } from "../types/types";
 
-export function useUserPost(userId: String) {
+export function useUserPost(clerkUser: any) {
     const query = useQuery({
         queryKey: ["userPosts"],
         queryFn: async () => {
-            return axios.get(`/api/post/${userId}/user`);
+            return (clerkUser.isLoaded && axios.get(`/api/post/${clerkUser.user.id}/user`));
         }
     });
 
